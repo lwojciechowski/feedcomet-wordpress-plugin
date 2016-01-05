@@ -6,7 +6,7 @@
  * Administration panel
  */
 
-class vue_admin 
+class vue_admin
 {
 
     const OPTION_CLIENT_ID = 'vuefeed-client-id';
@@ -16,7 +16,7 @@ class vue_admin
      * Setup hooks
      */
     public function __construct()
-    {	
+    {
         // Product options
         add_action('admin_init', array($this, 'admin_init'));
         add_action('admin_menu', array($this, 'admin_menu'));
@@ -28,7 +28,7 @@ class vue_admin
     public function admin_init()
     {
         add_action('save_post', array($this, 'save_product'));
-    }   
+    }
 
 
     public function save_product($id)
@@ -45,17 +45,17 @@ class vue_admin
         }
 
         $client = new vue_api_client($client_id, $client_secret);
-        
+
         $client->add_product(new vue_product(get_post($id)));
     }
-    
+
     public function admin_menu()
     {
         add_submenu_page( 'woocommerce', 'VueFeed Options', 'VueFeed Options', 'manage_options', 'vuefeed-options', array($this, 'options_page'));
     }
 
     public function options_page()
-    {   
+    {
         if(!current_user_can('manage_options')) {
             exit('Access denied');
         }

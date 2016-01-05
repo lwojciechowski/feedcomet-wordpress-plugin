@@ -46,8 +46,8 @@ class vue_api_client
 		} else {
 			$response = wp_remote_post(self::ACCESS_TOKEN_URL, array(
 				'body' => array(
-					'client_id' => $this->client_id, 
-					'client_secret' => $this->secret, 
+					'client_id' => $this->client_id,
+					'client_secret' => $this->secret,
 					'grant_type' => self::GRANT_TYPE
 				),
 			));
@@ -58,7 +58,7 @@ class vue_api_client
 				update_option('vue_feed_access_token_ttl', $time + intval($body->expires_in));
 
 				return $body->access_token;
-			}	
+			}
 
 			return false;
 		}
@@ -75,7 +75,7 @@ class vue_api_client
 		$args = array(
 			'method' => $product->get_remote_id() > 0 ? 'PUT' : 'POST',
 			'headers' => array(
-				'Authorization' => $this->get_access_token(),
+				'Authorization' => 'Bearer ' . $this->get_access_token(true),
 			),
 			'body' => $product->get_json(),
 		);
@@ -84,6 +84,7 @@ class vue_api_client
 			$this->get_product_url($product->get_remote_id()),
 			$args
 		);
+
 		$responseBody = json_decode($response['body']);
 
 		if((int)$response['response']['code'] == 200) {
