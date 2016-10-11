@@ -6,7 +6,7 @@
  * XML Item generation
  */
 
-class vue_product
+class feedcomet_product
 {
 	// Constraints
 	const MAX_ID_LEN = 50;

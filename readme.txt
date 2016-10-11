@@ -1,13 +1,13 @@
-=== TFM Google Product Feed ===
-Contributors: nostrzak
-Tags: google merchants, google products feed, google product feed, google shopping, xml feed, rss, themes for me, themesfor.me
-Requires at least: 4.0
-Tested up to: 4.1
-Stable tag: 1.0.7
+=== FeedComet Wordpress Plugin ===
+Contributors: feedcomet
+Tags: google merchants, google products feed, google product feed, google shopping, xml feed, rss, feedcomet
+Requires at least: 4.6
+Tested up to: 4.6.1
+Stable tag: 1.0.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-The ThemesFor.me Google Product Feed allows to expose all your products from WooCommerce and provide them in the Google Merchants Console.
+FeedComet plugin that allows to export all your product to external marketplaces and marketing platforms.
 
 == Description ==
 
