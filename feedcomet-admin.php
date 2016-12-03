@@ -8,9 +8,6 @@
 
 class feedcomet_admin
 {
-
-    const OPTION_TOKEN = 'feedcomet_token';
-
     /**
      * Setup hooks
      */
@@ -19,6 +16,7 @@ class feedcomet_admin
         // Product options
         add_action('admin_init', array($this, 'admin_init'));
         add_action('admin_menu', array($this, 'admin_menu'));
+        add_action('save_post', array($this, 'save_product'));
     }
 
     /**
@@ -29,27 +27,16 @@ class feedcomet_admin
         add_action('save_post', array($this, 'save_product'));
     }
 
-
     public function save_product($id)
     {
         if (
             (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) ||
             wp_is_post_revision($id) ||
             get_post_type($id) !== 'product'
-        ) {
-            return;
-        }
+        ) { return; }
 
-        // $client_id = get_option(self::OPTION_CLIENT_ID, false);
-        // $client_secret = get_option(self::OPTION_CLIENT_SECRET, false);
-
-        // if (!$client_id || !$client_secret) {
-        //     return;
-        // }
-
-        // $client = new vue_api_client($client_id, $client_secret);
-
-        // $client->add_product(new vue_product(get_post($id)));
+        $client = new feedcomet_api_client();
+        $client->update_product($id);
     }
 
     public function admin_menu()
@@ -70,15 +57,14 @@ class feedcomet_admin
             exit('Access denied');
         }
 
+        $client = new feedcomet_api_client();
+
         if (isset($_POST['token'])) {
-            update_option(self::OPTION_TOKEN, $_POST['token']);
+            $client->set_token($_POST['token']);
         }
 
-        $token = get_option(self::OPTION_TOKEN, '');
-
-        if ($token) {
-            $client = new feedcomet_api_client($token);
-        }
+        $client->update_products();
+        $token = $client->get_token();
 
         include 'templates/options-page.php';
     }

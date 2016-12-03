@@ -12,12 +12,27 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+const UPDATE_EVENT_NAME = 'feedcomet_products_update';
+
 /**
  * Check if WooCommerce is active
  **/
 if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_option('active_plugins')))) {
     require_once('feedcomet-product.php');
     require_once('feedcomet-api-client.php');
+
+
+    // Add hourly update check to wp_cron
+    if (!wp_next_scheduled(UPDATE_EVENT_NAME)) {
+        wp_schedule_event(time(), 'hourly', UPDATE_EVENT_NAME);
+    }
+
+    add_action(UPDATE_EVENT_NAME, 'check_products_updates');
+
+    function check_products_updates() {
+        $client = feedcomet_api_client();
+        $client->update_products();
+    }
 
     // Admin
     if (is_admin()) {

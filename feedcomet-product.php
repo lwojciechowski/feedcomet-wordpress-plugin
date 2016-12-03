@@ -15,7 +15,6 @@ class feedcomet_product
     const MAX_LINK_LEN = 2000;
     const MAX_PROD_TYPE_LEN = 750;
     const META_LAST_UPDATE = 'feedcomet-last-updated';
-    const META_REMOTE_ID = 'feedcomet-id';
 
     private $product;
     private $currency;
@@ -28,7 +27,7 @@ class feedcomet_product
     *
     * @param $product Product as WooCommerce object
     */
-    public function __construct(WP_Post $product)
+    public function __construct($product)
     {
         $this->product = new WC_Product($product);
     }
@@ -42,17 +41,15 @@ class feedcomet_product
     {
         $p = $this->product;
         $product_array = array(
-            'id' => substr($p->id, 0, 50),
-            'title' => substr($p->get_title(),0,150),
-            'description' => substr($p->get_post_data()->post_excerpt,0,5000),
-            'link' => substr($p->get_permalink(),0,2000),
-            'image' => substr(wp_get_attachment_url($p->get_image_id()),0,2000),
-            'condition' => get_option('tfm_shrike_setting_condition','new'),
+            'id' => (string)$p->id,
+            'title' => $p->get_title(),
+            'description' => $p->get_post_data()->post_excerpt,
+            'link' => $p->get_permalink(),
+            'image' => (string)wp_get_attachment_url($p->get_image_id()),
             'availability' => $p->is_in_stock() ? 'in stock' : 'out of stock',
             'price' => sprintf('%s %s', $p->get_price(), get_woocommerce_currency()),
-            'category' => substr($this->get_product_type($p),0,750),
+            'category' => $this->get_product_type($p),
         );
-
         return json_encode($product_array);
     }
 
@@ -89,11 +86,6 @@ class feedcomet_product
         return implode(' &gt; ', $result);
     }
 
-    public function get_last_updated()
-    {
-        return get_post_meta($this->product->id, self::META_LAST_UPDATE, true);
-    }
-
     public function set_last_updated($time = 0)
     {
         if(!$time) {
@@ -103,13 +95,8 @@ class feedcomet_product
         return update_post_meta($this->product->id, self::META_LAST_UPDATE, $time);
     }
 
-    public function get_remote_id()
+    public function get_id()
     {
-        return get_post_meta($this->product->id, self::META_REMOTE_ID, true);
-    }
-
-    public function set_remote_id($id)
-    {
-        return update_post_meta($this->product->id, self::META_REMOTE_ID, $id);
+        return $this->product->id;
     }
 }

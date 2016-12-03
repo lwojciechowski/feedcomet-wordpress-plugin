@@ -8,10 +8,11 @@
 
 class feedcomet_api_client
 {
-    const BASE_DOMAIN = 'http://172.17.0.1:8000/';
+    const BASE_DOMAIN = 'http://feedcomet.com/';
     const API_SOURCE_URL = self::BASE_DOMAIN . 'api/products/v1/products/source';
     const API_ADD_PRODUCTS_URL = self::BASE_DOMAIN . 'api/products/v1/products/';
     const OPTION_SOURCE = 'feedcomet_source';
+    const OPTION_TOKEN = 'feedcomet_token';
 
     protected $token;
     protected $source_id;
@@ -21,12 +22,10 @@ class feedcomet_api_client
      *
      * @param string $token Authorization token
      */
-    public function __construct($token)
+    public function __construct()
     {
-        $this->token = $token;
+        $this->token = get_option(self::OPTION_TOKEN, '');;
         $this->source_id = $this->initialize_source_id();
-
-        $this->check_sync();
     }
 
     /**
@@ -36,12 +35,15 @@ class feedcomet_api_client
      */
     protected function initialize_source_id()
     {
-        delete_option(self::OPTION_SOURCE);
+        if (!$this->token) {
+            return '';
+        }
+
         $source_id = get_option(self::OPTION_SOURCE, '');
 
         if (!$source_id) {
             $response = wp_remote_get(
-                self::API_SOURCE_URL . '?eic=' . $this->plugin_id(),
+                self::API_SOURCE_URL . '?eic=' . $this->get_plugin_id(),
                 array(
                     'headers' => array('PluginToken' => $this->token),
                 )
@@ -56,61 +58,65 @@ class feedcomet_api_client
         return $source_id;
     }
 
-    protected function plugin_id()
-    {
-        return md5('woocommerce' + home_url());
-    }
-
-    /**
-     * Send Product to the API
-     *
-     * @param Product $product product to submit
-     * @return boolean Information about success of submit
-     */
-    public function add_product(vue_product $product)
-    {
-        $args = array(
-            'method' => $product->get_remote_id() > 0 ? 'PUT' : 'POST',
-            'headers' => array(
-                'Authorization' => 'Bearer ' . $this->get_access_token(true),
-            ),
-            'body' => $product->get_json(),
-        );
-
-        $response = wp_remote_post(
-            $this->get_product_url($product->get_remote_id()),
-            $args
-        );
-
-        $responseBody = json_decode($response['body']);
-
-        if((int)$response['response']['code'] == 200) {
-            $product->set_last_updated();
-            $product->set_remote_id($responseBody->id);
-            return true;
-        } else {
-            return false;
-        }
-    }
-
     public function get_source_id()
     {
         return $this->source_id;
     }
 
-    public function check_sync()
+    protected function get_plugin_id()
     {
-        $products = '';
+        return md5('woocommerce' + home_url());
+    }
 
-        $args = array('post_type' => 'product');
-        $query = new \WP_Query($args);
+    public function set_token($token) {
+        delete_option(self::OPTION_SOURCE);
+        update_option(self::OPTION_TOKEN, $token);
+        $this->token = $token;
+    }
 
-        if($query->have_posts()) {
-            $posts = $query->get_posts();
+    public function get_token() {
+        return $this->token;
+    }
 
-            foreach($posts as $post) {
+    public function update_product($id) {
+        $post = get_post($id);
+
+        $this->query_products([$post]);
+    }
+
+    public function update_products()
+    {
+        if (!$this->token) {
+            return;
+        }
+
+        global $wpdb;
+
+        $querystr = "
+            SELECT pt.*, mt_exists.*
+            FROM $wpdb->posts pt
+            LEFT JOIN $wpdb->postmeta mt_exists
+            ON pt.ID = mt_exists.post_id
+            AND mt_exists.meta_key = '".feedcomet_product::META_LAST_UPDATE."'
+            WHERE pt.post_type = 'product'
+            AND mt_exists.post_id IS NULL
+            OR mt_exists.meta_value < UNIX_TIMESTAMP(pt.post_modified)
+        ";
+
+        $posts = $wpdb->get_results($querystr, OBJECT);
+
+        $this->query_products($posts);
+    }
+
+    private function query_products($posts) {
+        if($posts) {
+            $products = [];
+            $products_json_stream = '';
+
+            foreach ($posts as $post) {
                 $product = new feedcomet_product($post);
-                $products .= $product->get_json();
+                $products[] = $product;
+                $products_json_stream .= $product->get_json();
             }
 
             $response = wp_remote_post(
@@ -118,10 +124,21 @@ class feedcomet_api_client
                 array(
                     'method' => 'POST',
                     'headers' => array('PluginToken' => $this->token),
-                    'body' => $products,
+                    'body' => $products_json_stream,
 
                 )
             );
+
+            $saved_ids = array_map(
+                function ($id) { return intval($id); },
+                explode("\n", $response['body'])
+            );
+
+            foreach($products as $product) {
+                if(in_array($product->get_id(), $saved_ids)) {
+                    $product->set_last_updated();
+                }
+            }
         }
     }
 }
