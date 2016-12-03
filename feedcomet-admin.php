@@ -56,8 +56,8 @@ class feedcomet_admin
     {
         add_submenu_page(
             'woocommerce',
-            'FeedComet Options',
-            'FeedComet Options',
+            'Feedcomet Options',
+            'Feedcomet Options',
             'manage_options',
             'feedcomet-options',
             array($this, 'options_page')

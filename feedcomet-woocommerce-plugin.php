@@ -1,10 +1,10 @@
 <?php
 /*
-Plugin Name: FeedComet WooCommerce plugin
+Plugin Name: feedcomet WooCommerce plugin
 Plugin URI: http://feedcomet.com/
-Description: FeedComet integration plugin for WooCommerce
+Description: feedcomet integration plugin for WooCommerce
 Version: 1.0.0
-Author: FeedComet
+Author: feedcomet
 Author URI: http://feedcomet.com/
 License: GPL2
  */
@@ -16,8 +16,8 @@ if (!defined('ABSPATH')) {
  * Check if WooCommerce is active
  **/
 if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_option('active_plugins')))) {
-	require_once('feedcomet-product.php');
-	require_once('feedcomet-api-client.php');
+    require_once('feedcomet-product.php');
+    require_once('feedcomet-api-client.php');
 
     // Admin
     if (is_admin()) {
