@@ -8,11 +8,12 @@
 
 class feedcomet_api_client
 {
-    const BASE_DOMAIN = 'http://feedcomet.com/';
+    const BASE_DOMAIN = 'https://feedcomet.com/';
     const API_SOURCE_URL = self::BASE_DOMAIN . 'api/products/v1/products/source';
     const API_ADD_PRODUCTS_URL = self::BASE_DOMAIN . 'api/products/v1/products/';
     const OPTION_SOURCE = 'feedcomet_source';
     const OPTION_TOKEN = 'feedcomet_token';
+    const PRODUCTS_LIMIT = 50;
 
     protected $token;
     protected $source_id;
@@ -24,7 +25,7 @@ class feedcomet_api_client
      */
     public function __construct()
     {
-        $this->token = get_option(self::OPTION_TOKEN, '');;
+        $this->token = get_option(self::OPTION_TOKEN, '');
         $this->source_id = $this->initialize_source_id();
     }
 
@@ -68,17 +69,20 @@ class feedcomet_api_client
         return md5('woocommerce' + home_url());
     }
 
-    public function set_token($token) {
+    public function set_token($token)
+    {
         delete_option(self::OPTION_SOURCE);
         update_option(self::OPTION_TOKEN, $token);
         $this->token = $token;
     }
 
-    public function get_token() {
+    public function get_token()
+    {
         return $this->token;
     }
 
-    public function update_product($id) {
+    public function update_product($id)
+    {
         $post = get_post($id);
 
         $this->query_products([$post]);
@@ -101,43 +105,59 @@ class feedcomet_api_client
             WHERE pt.post_type = 'product'
             AND mt_exists.post_id IS NULL
             OR mt_exists.meta_value < UNIX_TIMESTAMP(pt.post_modified)
+            LIMIT ".self::PRODUCTS_LIMIT."
         ";
 
         $posts = $wpdb->get_results($querystr, OBJECT);
 
         $this->query_products($posts);
+
+        if (count($posts) == self::PRODUCTS_LIMIT) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
-    private function query_products($posts) {
-        if($posts) {
-            $products = [];
-            $products_json_stream = '';
+    private function query_products($posts)
+    {
+        if (!$posts) {
+            return;
+        }
 
-            foreach ($posts as $post) {
-                $product = new feedcomet_product($post);
-                $products[] = $product;
-                $products_json_stream .= $product->get_json();
-            }
+        $products = [];
+        $products_json_stream = '';
 
-            $response = wp_remote_post(
-                self::API_ADD_PRODUCTS_URL . $this->source_id . '/',
-                array(
-                    'method' => 'POST',
-                    'headers' => array('PluginToken' => $this->token),
-                    'body' => $products_json_stream,
+        foreach ($posts as $post) {
+            $product = new feedcomet_product($post);
+            $products[] = $product;
+            $products_json_stream .= $product->get_json();
+        }
 
-                )
-            );
+        $response = wp_remote_post(
+            self::API_ADD_PRODUCTS_URL . $this->source_id . '/',
+            array(
+                'method' => 'POST',
+                'headers' => array('PluginToken' => $this->token),
+                'body' => $products_json_stream,
 
-            $saved_ids = array_map(
-                function ($id) { return intval($id); },
-                explode("\n", $response['body'])
-            );
+            )
+        );
 
-            foreach($products as $product) {
-                if(in_array($product->get_id(), $saved_ids)) {
-                    $product->set_last_updated();
-                }
+        $saved_ids = array_map(
+            function ($id) {
+                return intval($id);
+            },
+            explode("\n", $response['body'])
+        );
+
+        $product->set_last_updated();
+
+        foreach ($products as $product) {
+            if (in_array($product->get_id(), $saved_ids)) {
+                $product->set_successfully_modified(true);
+            } else {
+                $product->set_successfully_modified(false);
             }
         }
     }

@@ -14,7 +14,8 @@ class feedcomet_product
     const MAX_DESCRIPTION_LEN = 5000;
     const MAX_LINK_LEN = 2000;
     const MAX_PROD_TYPE_LEN = 750;
-    const META_LAST_UPDATE = 'feedcomet-last-updated';
+    const META_LAST_UPDATE = 'feedcomet_last_updated';
+    const META_SUCCESSFULLY_MODIFIED = 'feedcomet_successfully_modified';
 
     private $product;
     private $currency;
@@ -57,23 +58,22 @@ class feedcomet_product
     {
         $args = array( 'taxonomy' => 'product_cat',);
 
-        $terms = wp_get_post_terms($post->id,'product_cat', $args);
+        $terms = wp_get_post_terms($post->id, 'product_cat', $args);
 
         $result = array();
 
-        if(count($terms) == 0) {
+        if (count($terms) == 0) {
             return '';
         }
 
-        $digest = function ($id) use (&$result, &$digest)
-        {
-            if(!isset(self::$categories_cache[$id])) {
+        $digest = function ($id) use (&$result, &$digest) {
+            if (!isset(self::$categories_cache[$id])) {
                 self::$categories_cache[$id] = get_term_by('id', $id, 'product_cat', 'ARRAY_A');
             }
 
             $term = self::$categories_cache[$id];
 
-            if($term['parent']) {
+            if ($term['parent']) {
                 $digest($term['parent']);
             }
 
@@ -88,11 +88,15 @@ class feedcomet_product
 
     public function set_last_updated($time = 0)
     {
-        if(!$time) {
+        if (!$time) {
             $time = time();
         }
 
         return update_post_meta($this->product->id, self::META_LAST_UPDATE, $time);
+    }
+
+    public function set_successfully_modified($status) {
+        return update_post_meta($this->product->id, self::META_SUCCESSFULLY_MODIFIED, $status);
     }
 
     public function get_id()

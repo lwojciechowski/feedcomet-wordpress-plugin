@@ -18,8 +18,9 @@ const UPDATE_EVENT_NAME = 'feedcomet_products_update';
  * Check if WooCommerce is active
  **/
 if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_option('active_plugins')))) {
-    require_once('feedcomet-product.php');
+    require_once('feedcomet-admin.php');
     require_once('feedcomet-api-client.php');
+    require_once('feedcomet-product.php');
 
 
     // Add hourly update check to wp_cron
@@ -29,13 +30,15 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
 
     add_action(UPDATE_EVENT_NAME, 'check_products_updates');
 
-    function check_products_updates() {
+    function check_products_updates()
+    {
         $client = feedcomet_api_client();
         $client->update_products();
     }
 
     // Admin
     if (is_admin()) {
-        require_once('feedcomet-admin.php');
+        $feedcomet_admin = new feedcomet_admin();
+        $feedcomet_admin->add_actions();
     }
 }

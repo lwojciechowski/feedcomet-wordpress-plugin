@@ -1,0 +1,16 @@
+<script type="text/javascript" >
+    jQuery(document).ready(function($) {
+        var params = {
+            'action': 'products_sync',
+        }
+
+        function sync() {
+            jQuery.post(ajaxurl, params, function (response) {
+                if(response === '1') {
+                    sync();
+                }
+            });
+        }
+        sync();
+    });
+</script>

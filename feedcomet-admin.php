@@ -11,20 +11,13 @@ class feedcomet_admin
     /**
      * Setup hooks
      */
-    public function __construct()
+    public function add_actions()
     {
         // Product options
-        add_action('admin_init', array($this, 'admin_init'));
         add_action('admin_menu', array($this, 'admin_menu'));
         add_action('save_post', array($this, 'save_product'));
-    }
-
-    /**
-     * Init all things required for admin
-     */
-    public function admin_init()
-    {
-        add_action('save_post', array($this, 'save_product'));
+        add_action('admin_footer', array($this, 'ajax_script'));
+        add_action('wp_ajax_products_sync', array($this, 'ajax_products_sync'));
     }
 
     public function save_product($id)
@@ -33,7 +26,9 @@ class feedcomet_admin
             (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) ||
             wp_is_post_revision($id) ||
             get_post_type($id) !== 'product'
-        ) { return; }
+        ) {
+            return;
+        }
 
         $client = new feedcomet_api_client();
         $client->update_product($id);
@@ -64,15 +59,24 @@ class feedcomet_admin
         }
 
         $client->update_products();
+
+        // Store it for the template
         $token = $client->get_token();
 
         include 'templates/options-page.php';
     }
-}
 
-if (!defined('ABSPATH')) {
-    exit;
-}
+    public function ajax_script() {
+        include 'templates/ajax.html';
+    }
 
-global $feedcomet_admin;
-$feedcomet_admin = new feedcomet_admin();
+    public function ajax_products_sync() {
+        $client = new feedcomet_api_client();
+        if ($client->update_products()) {
+            echo '1';
+        } else {
+            echo '0';
+        }
+        wp_die();
+    }
+}
