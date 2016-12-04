@@ -8,6 +8,8 @@
             jQuery.post(ajaxurl, params, function (response) {
                 if(response === '1') {
                     sync();
+                } else {
+                    jQuery('.syncing_products').hide();
                 }
             });
         }
