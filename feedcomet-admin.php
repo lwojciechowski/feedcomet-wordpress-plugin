@@ -53,9 +53,10 @@ class feedcomet_admin
         }
 
         $client = new feedcomet_api_client();
+        $token_error = false;
 
         if (isset($_POST['token'])) {
-            $client->set_token($_POST['token']);
+            $token_error = !$client->set_token($_POST['token']);
         }
 
         $client->update_products();

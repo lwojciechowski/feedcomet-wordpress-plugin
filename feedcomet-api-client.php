@@ -11,6 +11,7 @@ class feedcomet_api_client
     const BASE_DOMAIN = 'https://feedcomet.com/';
     const API_SOURCE_URL = self::BASE_DOMAIN . 'api/products/v1/products/source';
     const API_ADD_PRODUCTS_URL = self::BASE_DOMAIN . 'api/products/v1/products/';
+    const API_TOKEN_USER_URL = self::BASE_DOMAIN . 'api/plugin/v1/token/user/';
     const OPTION_SOURCE = 'feedcomet_source';
     const OPTION_TOKEN = 'feedcomet_token';
     const PRODUCTS_LIMIT = 50;
@@ -72,8 +73,24 @@ class feedcomet_api_client
     public function set_token($token)
     {
         delete_option(self::OPTION_SOURCE);
-        update_option(self::OPTION_TOKEN, $token);
-        $this->token = $token;
+
+        $response = wp_remote_get(
+            self::API_TOKEN_USER_URL,
+            array(
+                'headers' => array('PluginToken' => $token),
+            )
+        );
+
+        if ($response['response']['code'] == 200) {
+            update_option(self::OPTION_TOKEN, $token);
+
+            $this->token = $token;
+            $this->source_id = $this->initialize_source_id();
+
+            return true;
+        }
+
+        return false;
     }
 
     public function get_token()

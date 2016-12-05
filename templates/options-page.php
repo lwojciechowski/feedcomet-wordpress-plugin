@@ -24,8 +24,9 @@
     <p>
         <?php _e('Please provide token from FeedComet platform.', 'feedcomet'); ?>
         <?php _e('Don\'t have token? <a href="http://feedcomet.com/plugin/token/">Get one here!</a>', 'feedcomet'); ?>
-
     </p>
+
+    <?php if ($token_error): ?><p style="color: red;"><?php _e('Provided token is invalid.', 'feedcomet'); ?></p><?php endif; ?>
 
     <form method="POST" action="">
         <input type="text" class="token" name="token" value="<?php echo $token; ?>" placeholder="Token" />
