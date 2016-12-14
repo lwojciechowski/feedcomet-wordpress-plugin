@@ -9,8 +9,8 @@
 class feedcomet_api_client
 {
     const BASE_DOMAIN = 'https://feedcomet.com/';
-    const API_SOURCE_URL = self::BASE_DOMAIN . 'api/products/v1/products/source';
-    const API_ADD_PRODUCTS_URL = self::BASE_DOMAIN . 'api/products/v1/products/';
+    const API_SOURCE_URL = self::BASE_DOMAIN . 'api/plugin/v1/products/source';
+    const API_ADD_PRODUCTS_URL = self::BASE_DOMAIN . 'api/plugin/v1/products/';
     const API_TOKEN_USER_URL = self::BASE_DOMAIN . 'api/plugin/v1/token/user/';
     const OPTION_SOURCE = 'feedcomet_source';
     const OPTION_TOKEN = 'feedcomet_token';
