@@ -50,7 +50,20 @@ class feedcomet_product
             'availability' => $p->is_in_stock() ? 'in stock' : 'out of stock',
             'price' => sprintf('%s %s', $p->get_price(), get_woocommerce_currency()),
             'category' => $this->get_product_type($p),
+            'attrs' => [
+                'short_description' => $p->get_post_data()->post_excerpt,
+                'sku' => $p->get_sku(),
+            ]
         );
+
+        foreach ($p->get_attributes() as $attr) {
+            $attr_value = $p->get_attribute($attr['name']);
+
+            if($attr_value) {
+                $product_array['attrs'][$attr['name']] = $attr_value;
+            }
+        }
+
         return json_encode($product_array);
     }
 

@@ -9,7 +9,7 @@
 class feedcomet_api_client
 {
     const BASE_DOMAIN = 'https://feedcomet.com/';
-    const API_SOURCE_URL = self::BASE_DOMAIN . 'api/plugin/v1/products/source';
+    const API_SOURCE_URL = self::BASE_DOMAIN . 'api/plugin/v1/sources/register';
     const API_ADD_PRODUCTS_URL = self::BASE_DOMAIN . 'api/plugin/v1/products/';
     const API_TOKEN_USER_URL = self::BASE_DOMAIN . 'api/plugin/v1/token/user/';
     const OPTION_SOURCE = 'feedcomet_source';
@@ -45,7 +45,9 @@ class feedcomet_api_client
 
         if (!$source_id) {
             $response = wp_remote_get(
-                self::API_SOURCE_URL . '?eic=' . $this->get_plugin_id(),
+                self::API_SOURCE_URL
+                    . '?eic=' . $this->get_plugin_id()
+                    . '&name=' . urlencode(get_bloginfo('name')),
                 array(
                     'headers' => array('PluginToken' => $this->token),
                 )
@@ -80,7 +82,6 @@ class feedcomet_api_client
                 'headers' => array('PluginToken' => $token),
             )
         );
-
         if ($response['response']['code'] == 200) {
             update_option(self::OPTION_TOKEN, $token);
 
