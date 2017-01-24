@@ -10,7 +10,7 @@ class feedcomet_api_client
 {
     const BASE_DOMAIN = 'https://feedcomet.com/';
     const API_SOURCE_URL = self::BASE_DOMAIN . 'api/plugin/v1/sources/register';
-    const API_ADD_PRODUCTS_URL = self::BASE_DOMAIN . 'api/plugin/v1/products/';
+    const API_PRODUCT_URL = self::BASE_DOMAIN . 'api/plugin/v1/products/';
     const API_TOKEN_USER_URL = self::BASE_DOMAIN . 'api/plugin/v1/token/user/';
     const OPTION_SOURCE = 'feedcomet_source';
     const OPTION_TOKEN = 'feedcomet_token';
@@ -82,6 +82,11 @@ class feedcomet_api_client
                 'headers' => array('PluginToken' => $token),
             )
         );
+
+        if (is_wp_error($response)) {
+            return false;
+        }
+
         if ($response['response']['code'] == 200) {
             update_option(self::OPTION_TOKEN, $token);
 
@@ -97,6 +102,17 @@ class feedcomet_api_client
     public function get_token()
     {
         return $this->token;
+    }
+
+    public function delete_product($id)
+    {
+        wp_remote_request(
+            self::API_PRODUCT_URL . $this->source_id . '/' . $id,
+            array(
+                'method' => 'DELETE',
+                'headers' => array('PluginToken' => $this->token),
+            )
+        );
     }
 
     public function update_product($id)
@@ -139,21 +155,23 @@ class feedcomet_api_client
 
     private function query_products($posts)
     {
-        if (!$posts) {
-            return;
-        }
-
         $products = [];
         $products_json_stream = '';
 
         foreach ($posts as $post) {
-            $product = new feedcomet_product($post);
-            $products[] = $product;
-            $products_json_stream .= $product->get_json();
+            if (get_post_status($post->ID) != 'trash') {
+                $product = new feedcomet_product($post);
+                $products[] = $product;
+                $products_json_stream .= $product->get_json();
+            }
+        }
+
+        if (!$products) {
+            return;
         }
 
         $response = wp_remote_post(
-            self::API_ADD_PRODUCTS_URL . $this->source_id . '/',
+            self::API_PRODUCT_URL . $this->source_id . '/',
             array(
                 'method' => 'POST',
                 'headers' => array('PluginToken' => $this->token),
@@ -161,6 +179,10 @@ class feedcomet_api_client
 
             )
         );
+
+        if (is_wp_error($response)) {
+            return;
+        }
 
         $saved_ids = array_map(
             function ($id) {
