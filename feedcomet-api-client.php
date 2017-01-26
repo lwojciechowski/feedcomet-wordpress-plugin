@@ -48,7 +48,7 @@ class feedcomet_api_client
                 self::API_SOURCE_URL
                     . '?eic=' . $this->get_plugin_id()
                     . '&name=' . urlencode(get_bloginfo('name'))
-                    . '&url=' . home_url(),
+                    . '&url=' . urlencode(home_url()),
                 array(
                     'headers' => array('PluginToken' => $this->token),
                 )
