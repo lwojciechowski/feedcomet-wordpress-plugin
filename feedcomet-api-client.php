@@ -90,6 +90,7 @@ class feedcomet_api_client
 
         if ($response['response']['code'] == 200) {
             update_option(self::OPTION_TOKEN, $token);
+            delete_option(self::OPTION_SOURCE);
 
             $this->token = $token;
             $this->source_id = $this->initialize_source_id();
