@@ -193,9 +193,10 @@ class feedcomet_api_client
             explode("\n", $response['body'])
         );
 
-        $product->set_last_updated();
 
         foreach ($products as $product) {
+            $product->set_last_updated();
+
             if (in_array($product->get_id(), $saved_ids)) {
                 $product->set_successfully_modified(true);
             } else {
