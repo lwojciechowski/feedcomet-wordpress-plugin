@@ -75,7 +75,9 @@ class feedcomet_api_client
 
     public function set_token($token)
     {
+        delete_option(self::OPTION_TOKEN);
         delete_option(self::OPTION_SOURCE);
+        $this->wipe_last_updated();
 
         $response = wp_remote_get(
             self::API_TOKEN_USER_URL,
@@ -90,7 +92,6 @@ class feedcomet_api_client
 
         if ($response['response']['code'] == 200) {
             update_option(self::OPTION_TOKEN, $token);
-            delete_option(self::OPTION_SOURCE);
 
             $this->token = $token;
             $this->source_id = $this->initialize_source_id();
@@ -203,5 +204,17 @@ class feedcomet_api_client
                 $product->set_successfully_modified(false);
             }
         }
+    }
+
+    private function wipe_last_updated()
+    {
+        global $wpdb;
+
+        return $wpdb->delete(
+            $wpdb->postmeta,
+            array(
+                'meta_key' => feedcomet_product::META_LAST_UPDATE
+            )
+        );
     }
 }
