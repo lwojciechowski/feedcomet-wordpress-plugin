@@ -47,7 +47,7 @@ class feedcomet_api_client
             $response = wp_remote_get(
                 self::API_SOURCE_URL
                     . '?eic=' . $this->get_plugin_id()
-                    . '&name=' . urlencode(get_bloginfo('name'))
+                    . '&name=' . get_bloginfo('name')
                     . '&url=' . urlencode(home_url()),
                 array(
                     'headers' => array('PluginToken' => $this->token),
