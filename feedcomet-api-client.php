@@ -75,9 +75,7 @@ class feedcomet_api_client
 
     public function set_token($token)
     {
-        delete_option(self::OPTION_TOKEN);
-        delete_option(self::OPTION_SOURCE);
-        $this->wipe_last_updated();
+        $this->clear_token();
 
         $response = wp_remote_get(
             self::API_TOKEN_USER_URL,
@@ -105,6 +103,16 @@ class feedcomet_api_client
     public function get_token()
     {
         return $this->token;
+    }
+
+    public function clear_token()
+    {
+        delete_option(self::OPTION_TOKEN);
+        delete_option(self::OPTION_SOURCE);
+        $this->wipe_last_updated();
+
+        $this->token = null;
+        $this->source_id = null;
     }
 
     public function delete_product($id)

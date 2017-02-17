@@ -51,8 +51,8 @@ class feedcomet_admin
     {
         add_submenu_page(
             'woocommerce',
-            'feedcomet options',
-            'feedcomet options',
+            'Feedcomet Options',
+            'Feedcomet Options',
             'manage_options',
             'feedcomet-options',
             array($this, 'options_page')
@@ -70,6 +70,10 @@ class feedcomet_admin
 
         if (isset($_POST['token'])) {
             $token_error = !$client->set_token($_POST['token']);
+        }
+
+        if (isset($_POST['disconnect'])) {
+            $client->clear_token();
         }
 
         $client->update_products();

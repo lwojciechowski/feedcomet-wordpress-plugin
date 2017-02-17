@@ -1,17 +1,17 @@
 === FeedComet Wordpress Plugin ===
 Contributors: feedcomet
-Tags: google merchants, google products feed, google product feed, google shopping, xml feed, rss, feedcomet
-Requires at least: 4.6
-Tested up to: 4.6.1
+Tags: google merchants, google products feed, google product feed, google shopping, xml feed, rss, feedcomet, google shopping ads
+Requires at least: 4.7
+Tested up to: 4.7.2
 Stable tag: 1.0.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-FeedComet plugin that allows to export all your product to external marketplaces and marketing platforms.
+Plugin for feedcomet platform that allows you to export your product to Google Merchants.
 
 == Description ==
 
-The ThemesFor.me Google Product Feed allows to expose all your products from WooCommerce and provide them in the Google Merchants Console.
+The feedcomet platform allows to expose all your products from WooCommerce and provide them in the Google Merchants Console.
 
 WHAT IS GOOGLE MERCHANT CENTER?
 
@@ -30,19 +30,10 @@ Google Shopping is available in limited countries. For actual list please visit 
 
 1. Unzip the plugin and copy it to the wp-contents/plugins/ directory.
 2. Activate the plugin in the Plugins section of your WordPress.
-3. Go to the WooCommerce > Settings > Google Product Feed tab.
-4. Go through the settings and click save.
-5. You can access your Google Products Feed at the url provided on the top of settings page.
+3. Go to the WooCommerce > feedcomet options.
+4. Follow the steps.
 
 == Changelog ==
 
-= 1.0.5 =
-* Implemented Unique Product Identifiers for individual products
-* Minor UI improvements
-
-= 1.0.3 =
-* Allow to print more than 10 items
-* Fix bugs
-
 = 1.0 =
-* Initial version of free plugin
+* Initial version of the plugin.
