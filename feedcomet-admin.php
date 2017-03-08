@@ -18,6 +18,7 @@ class feedcomet_admin
         add_action('save_post', array($this, 'save_product'));
         add_action('admin_footer', array($this, 'ajax_script'));
         add_action('wp_ajax_products_sync', array($this, 'ajax_products_sync'));
+        add_action('woocommerce_product_set_stock_status', array($this, 'change_stock_status'));
 
         add_action('delete_post', array($this, 'delete_product'));
         add_action('wp_trash_post', array($this, 'delete_product'));
@@ -33,6 +34,12 @@ class feedcomet_admin
             return;
         }
 
+        $client = new feedcomet_api_client();
+        $client->update_product($id);
+    }
+
+    public function change_stock_status($id, $status)
+    {
         $client = new feedcomet_api_client();
         $client->update_product($id);
     }
