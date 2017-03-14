@@ -9,12 +9,13 @@
 class feedcomet_api_client
 {
     const BASE_DOMAIN = 'https://feedcomet.com/';
-    const API_SOURCE_URL = self::BASE_DOMAIN . 'api/plugin/v1/sources/register';
-    const API_PRODUCT_URL = self::BASE_DOMAIN . 'api/plugin/v1/products/';
-    const API_TOKEN_USER_URL = self::BASE_DOMAIN . 'api/plugin/v1/token/user/';
+    const API_SOURCE_URL = self::BASE_DOMAIN . 'api/products/v1/sources/register';
+    const API_PRODUCT_URL = self::BASE_DOMAIN . 'api/products/v1/products/';
+    const API_TOKEN_VALID = self::BASE_DOMAIN . 'api/users/v1/token/valid';
     const OPTION_SOURCE = 'feedcomet_source';
     const OPTION_TOKEN = 'feedcomet_token';
     const PRODUCTS_LIMIT = 50;
+    const TOKEN_HEADER_NAME = 'X-User-Token';
 
     protected $token;
     protected $source_id;
@@ -50,7 +51,7 @@ class feedcomet_api_client
                     . '&name=' . get_bloginfo('name')
                     . '&url=' . urlencode(home_url()),
                 array(
-                    'headers' => array('PluginToken' => $this->token),
+                    'headers' => array(self::TOKEN_HEADER_NAME => $this->token),
                 )
             );
 
@@ -78,9 +79,9 @@ class feedcomet_api_client
         $this->clear_token();
 
         $response = wp_remote_get(
-            self::API_TOKEN_USER_URL,
+            self::API_TOKEN_VALID,
             array(
-                'headers' => array('PluginToken' => $token),
+                'headers' => array(self::TOKEN_HEADER_NAME => $token),
             )
         );
 
@@ -88,7 +89,7 @@ class feedcomet_api_client
             return false;
         }
 
-        if ($response['response']['code'] == 200) {
+        if ($response['response']['code'] == 204) {
             update_option(self::OPTION_TOKEN, $token);
 
             $this->token = $token;
@@ -121,7 +122,7 @@ class feedcomet_api_client
             self::API_PRODUCT_URL . $this->source_id . '/' . $id,
             array(
                 'method' => 'DELETE',
-                'headers' => array('PluginToken' => $this->token),
+                'headers' => array(self::TOKEN_HEADER_NAME => $this->token),
             )
         );
     }
@@ -185,7 +186,7 @@ class feedcomet_api_client
             self::API_PRODUCT_URL . $this->source_id . '/',
             array(
                 'method' => 'POST',
-                'headers' => array('PluginToken' => $this->token),
+                'headers' => array(self::TOKEN_HEADER_NAME => $this->token),
                 'body' => $products_json_stream,
 
             )
