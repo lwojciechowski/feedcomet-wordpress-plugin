@@ -11,7 +11,7 @@ class feedcomet_api_client
     const BASE_DOMAIN = 'https://feedcomet.com/';
     const API_SOURCE_URL = self::BASE_DOMAIN . 'api/products/v1/sources/register';
     const API_PRODUCT_URL = self::BASE_DOMAIN . 'api/products/v1/products/';
-    const API_TOKEN_VALID = self::BASE_DOMAIN . 'api/users/v1/token/valid';
+    const API_TOKEN_VALID = self::BASE_DOMAIN . 'api/users/v1/users/token/valid';
     const OPTION_SOURCE = 'feedcomet_source';
     const OPTION_TOKEN = 'feedcomet_token';
     const PRODUCTS_LIMIT = 50;
