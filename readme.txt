@@ -2,7 +2,7 @@
 Contributors: feedcomet
 Tags: google merchants, google products feed, google product feed, google shopping, xml feed, rss, feedcomet, google shopping ads
 Requires at least: 4.7
-Tested up to: 4.7.2
+Tested up to: 4.7.3
 Stable tag: 1.0.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html

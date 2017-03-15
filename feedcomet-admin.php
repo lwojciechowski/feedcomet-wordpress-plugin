@@ -40,6 +40,9 @@ class feedcomet_admin
 
     public function change_stock_status($id, $status)
     {
+        if (wp_is_post_revision($id)) {
+            return;
+        }
         $client = new feedcomet_api_client();
         $client->update_product($id);
     }
