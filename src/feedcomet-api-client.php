@@ -9,9 +9,9 @@
 class feedcomet_api_client
 {
     const BASE_DOMAIN = 'https://feedcomet.com/';
-    const API_SOURCE_URL = self::BASE_DOMAIN . 'api/products/v1/sources/register';
-    const API_PRODUCT_URL = self::BASE_DOMAIN . 'api/products/v1/products/';
-    const API_TOKEN_VALID = self::BASE_DOMAIN . 'api/users/v1/users/token/valid';
+    const API_SOURCE_URL = 'api/products/v1/sources/register';
+    const API_PRODUCT_URL = 'api/products/v1/products/';
+    const API_TOKEN_VALID = 'api/users/v1/users/token/valid';
     const OPTION_SOURCE = 'feedcomet_source';
     const OPTION_TOKEN = 'feedcomet_token';
     const PRODUCTS_LIMIT = 50;
@@ -46,6 +46,7 @@ class feedcomet_api_client
 
         if (!$source_id) {
             $response = wp_remote_get(
+                self::BASE_DOMAIN .
                 self::API_SOURCE_URL
                     . '?eic=' . $this->get_plugin_id()
                     . '&name=' . get_bloginfo('name')
@@ -79,6 +80,7 @@ class feedcomet_api_client
         $this->clear_token();
 
         $response = wp_remote_get(
+            self::BASE_DOMAIN .
             self::API_TOKEN_VALID,
             array(
                 'headers' => array(self::TOKEN_HEADER_NAME => $token),
@@ -119,6 +121,7 @@ class feedcomet_api_client
     public function delete_product($id)
     {
         wp_remote_request(
+            self::BASE_DOMAIN .
             self::API_PRODUCT_URL . $this->source_id . '/' . $id,
             array(
                 'method' => 'DELETE',
@@ -183,6 +186,7 @@ class feedcomet_api_client
         }
 
         $response = wp_remote_post(
+            self::BASE_DOMAIN .
             self::API_PRODUCT_URL . $this->source_id . '/',
             array(
                 'method' => 'POST',
