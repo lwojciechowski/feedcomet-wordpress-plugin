@@ -1,23 +1,25 @@
-=== FeedComet Wordpress Plugin ===
+=== WooCommerce Product Feed for Google Shopping ===
 Contributors: feedcomet
-Tags: google merchants, google products feed, google product feed, google shopping, xml feed, rss, feedcomet, google shopping ads
+Tags: google, google adwords, google merchant, shopping, woocommerce
 Requires at least: 4.7
 Tested up to: 4.7.3
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
+Donate link: https://feedcomet.com/
 
-Plugin for feedcomet platform that allows you to export your product to Google Merchants.
+Get more sales with Google Product Listing Ads. Use state of the art mapping tool and let us do all the hard work.
 
 == Description ==
+WooCommerce Product Feed by Feedcomet allows you to generate **Google Product Feed** for merchant centers like Google Shopping and others. The purpose of this plugin is to synchronise your products with [feedcomet platform](https://www.feedcomet.com). After that you will get access to custom made administration panel where all feed configuration will be a breeze.
 
-The feedcomet platform allows to expose all your products from WooCommerce and provide them in the Google Merchants Console.
+Offloading feed generation will save your hosting bills by reducing CPU usage, bandwith and keep your shop responsive all the time. Feed generation can be very expensive and error prone, we provided self hosted plugin already and we know what we are talking about. Let our specialised servers do this hard work for you.
 
-WHAT IS GOOGLE MERCHANT CENTER?
+**WHAT IS GOOGLE MERCHANT CENTER?**
 
 Google Merchant Center is a tool that helps you upload your store and product data to Google and make it available to Google Shopping and other Google services.
 
-WHAT IS GOOGLE SHOPPING?
+**WHAT IS GOOGLE SHOPPING?**
 
 Google Shopping is a service that allows buyers to find your products while they search on Google. It is similar to Google AdWords but with additional benefits:
 
@@ -33,7 +35,16 @@ Google Shopping is available in limited countries. For actual list please visit 
 3. Go to the WooCommerce > feedcomet options.
 4. Follow the steps.
 
+== Frequently Asked Questions ==
+
+= Is there any limitation to feed size? =
+
+No, we offload the feed generation to our servers which are capable of generating unlimited feeds.
+
 == Changelog ==
 
-= 1.0 =
+= 1.0.1 =
+* Wording changes.
+
+= 1.0.0 =
 * Initial version of the plugin.
