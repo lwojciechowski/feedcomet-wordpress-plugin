@@ -3,7 +3,7 @@
 Plugin Name: feedcomet WooCommerce plugin
 Plugin URI: http://feedcomet.com/
 Description: feedcomet integration plugin for WooCommerce
-Version: 1.0.2
+Version: 1.0.3
 Author: feedcomet
 Author URI: http://feedcomet.com/
 License: GPL2
@@ -13,6 +13,7 @@ if (!defined('ABSPATH')) {
 }
 
 const UPDATE_EVENT_NAME = 'feedcomet_products_update';
+define('FEEDCOMET_BASEFILE', __FILE__);
 
 /**
  * Check if WooCommerce is active

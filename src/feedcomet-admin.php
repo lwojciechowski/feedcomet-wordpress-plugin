@@ -22,6 +22,14 @@ class feedcomet_admin
 
         add_action('delete_post', array($this, 'delete_product'));
         add_action('wp_trash_post', array($this, 'delete_product'));
+
+        $client = new feedcomet_api_client();
+        if($client->get_token() == '') {
+            add_action('admin_notices', array($this, 'unconfigured_notice'));
+        }
+
+        // Settings link in the plugins list
+        add_filter('plugin_action_links_' . plugin_basename(FEEDCOMET_BASEFILE), array($this, 'add_settings_link'));
     }
 
     public function save_product($id)
@@ -98,6 +106,11 @@ class feedcomet_admin
         include 'templates/ajax.html';
     }
 
+    public function unconfigured_notice()
+    {
+        include 'templates/unconfigured-notice.php';
+    }
+
     public function ajax_products_sync() {
         $client = new feedcomet_api_client();
         if ($client->update_products()) {
@@ -106,5 +119,18 @@ class feedcomet_admin
             echo '0';
         }
         wp_die();
+    }
+
+    public function add_settings_link($links)
+    {
+        array_unshift(
+            $links,
+            sprintf(
+                '<a href="%s">%s</a>',
+                admin_url('admin.php?page=feedcomet-options'),
+                __('Settings', 'feedcomet')
+            )
+        );
+        return $links;
     }
 }
