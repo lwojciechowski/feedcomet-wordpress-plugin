@@ -43,6 +43,9 @@ No, we offload the feed generation to our servers which are capable of generatin
 
 == Changelog ==
 
+= 1.0.4 =
+* Add help infos.
+
 = 1.0.3 =
 * Add notification about unconfigured plugin.
 * Link to the settings in the plugin page.

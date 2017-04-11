@@ -24,7 +24,7 @@ class feedcomet_admin
         add_action('wp_trash_post', array($this, 'delete_product'));
 
         $client = new feedcomet_api_client();
-        if($client->get_token() == '') {
+        if($client->get_token() == '' && $_REQUEST['page'] !== 'feedcomet-options') {
             add_action('admin_notices', array($this, 'unconfigured_notice'));
         }
 
